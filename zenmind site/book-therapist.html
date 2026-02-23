@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book a Therapist – ZenMind</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, #eef7f3, #ffffff);
+      color: #2f3e46;
+      line-height: 1.6;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    header {
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #e5e7eb;
+      z-index: 1000;
+    }
+    .nav {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+    }
+    .logo { font-weight: 700; font-size: 1.4rem; color: #3a5a40; }
+    .nav-links { display: flex; gap: 1.5rem; font-weight: 500; }
+    .cta-btn {
+      background: #3a5a40; color: #fff; padding: 0.6rem 1.2rem;
+      border-radius: 999px; font-weight: 600;
+    }
+
+    .hero {
+      max-width: 900px;
+      margin: auto;
+      padding: 4rem 1.5rem 2rem;
+      text-align: center;
+    }
+    .hero h1 { font-size: 2.6rem; color: #344e41; }
+    .hero p { margin-top: 1rem; font-size: 1.1rem; color: #5f6f73; }
+
+    .therapists {
+      max-width: 1200px;
+      margin: auto;
+      padding: 4rem 1.5rem;
+    }
+    .therapists h2 { text-align: center; color: #344e41; margin-bottom: 2rem; }
+    .therapist-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+    .therapist-card {
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+    .therapist-card h3 { color: #344e41; }
+    .therapist-card p { color: #6b7a7e; margin: 0.4rem 0; }
+    .therapist-card button {
+      margin-top: 1rem;
+      background: #3a5a40;
+      color: white;
+      padding: 0.6rem 1.4rem;
+      border: none;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    footer {
+      background: #344e41;
+      color: #ffffff;
+      padding: 2rem 1.5rem;
+    }
+    .footer-content {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .therapist-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo">ZenMind</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="meditation.html">Meditation</a>
+      <a href="community.html">Community</a>
+      <a href="book-therapist.html">Book a Therapist</a>
+      <a href="about.html">About</a>
+      <a href="#">Login</a>
+    </div>
+    <a href="meditation.html" class="cta-btn">Get Started</a>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Book a Therapist</h1>
+  <p>Connect with a licensed professional and start your healing journey.</p>
+</section>
+
+<section class="therapists">
+  <h2>Available Therapists</h2>
+  <div class="therapist-grid">
+    <div class="therapist-card">
+      <img src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=400&q=80" alt="Dr. Anjali Mehta" style="width:100%;border-radius:16px;margin-bottom:1rem;">
+      <h3>Dr. Anjali Mehta</h3>
+      <p>Clinical Psychologist</p>
+      <p>8 years of experience</p>
+      <p>Price: ₹1800 per session</p>
+      <button>Select</button>
+    </div>
+    <div class="therapist-card">
+      <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80" alt="Dr. Rahul Verma" style="width:100%;border-radius:16px;margin-bottom:1rem;">
+      <h3>Dr. Rahul Verma</h3>
+      <p>Counseling Psychologist</p>
+      <p>10 years of experience</p>
+      <p>Price: ₹2500 per session</p>
+      <button>Select</button>
+    </div>
+    <div class="therapist-card">
+      <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=80" alt="Dr. Neha Kapoor" style="width:100%;border-radius:16px;margin-bottom:1rem;">
+      <h3>Dr. Neha Kapoor</h3>
+      <p>Therapist</p>
+      <p>6 years of experience</p>
+      <p>Price: ₹2200 per session</p>
+      <button>Select</button>
+    </div>
+    <div class="therapist-card">
+      <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=400&q=80" alt="Dr. Kavya Sharma" style="width:100%;border-radius:16px;margin-bottom:1rem;">
+      <h3>Dr. Kavya Sharma</h3>
+      <p>Psychotherapist</p>
+      <p>7 years of experience</p>
+      <p>Price: ₹2000 per session</p>
+      <button>Select</button>
+    </div>
+    <div class="therapist-card">
+      <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=400&q=80" alt="Dr. Aman Gupta" style="width:100%;border-radius:16px;margin-bottom:1rem;">
+      <h3>Dr. Aman Gupta</h3>
+      <p>Counselor</p>
+      <p>9 years of experience</p>
+      <p>Price: ₹3000 per session</p>
+      <button>Select</button>
+    </div>
+    <div class="therapist-card">
+      <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=400&q=80" alt="Dr. Riya Malhotra" style="width:100%;border-radius:16px;margin-bottom:1rem;">
+      <h3>Dr. Riya Malhotra</h3>
+      <p>Clinical Therapist</p>
+      <p>5 years of experience</p>
+      <p>Price: ₹1500 per session</p>
+      <button>Select</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-content">
+    <div>
+      <strong>ZenMind</strong>
+      <p>Find your calm. Grow your mind.</p>
+    </div>
+    <div>
+      <p>
+        <a href="about.html">About</a> · 
+        <a href="meditation.html">Meditation</a> · 
+        <a href="community.html">Community</a> · 
+        <a href="book-therapist.html">Therapist</a>
+      </p>
+      <p>Privacy · Terms</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us – ZenMind</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, #eef7f3, #ffffff);
+      color: #2f3e46;
+      line-height: 1.6;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    header {
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #e5e7eb;
+      z-index: 1000;
+    }
+    .nav {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+    }
+    .logo { font-weight: 700; font-size: 1.4rem; color: #3a5a40; }
+    .nav-links { display: flex; gap: 1.5rem; font-weight: 500; }
+    .cta-btn {
+      background: #3a5a40; color: #fff; padding: 0.6rem 1.2rem;
+      border-radius: 999px; font-weight: 600;
+    }
+
+    .hero {
+      max-width: 900px;
+      margin: auto;
+      padding: 4rem 1.5rem 2rem;
+      text-align: center;
+    }
+    .hero h1 { font-size: 2.6rem; color: #344e41; }
+    .hero p { margin-top: 1rem; font-size: 1.1rem; color: #5f6f73; }
+
+    .mission {
+      max-width: 1000px;
+      margin: auto;
+      padding: 2rem 1.5rem 4rem;
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+    }
+    .mission h2 { color: #344e41; margin-bottom: 1rem; }
+    .mission p { color: #5f6f73; margin-bottom: 1rem; }
+
+    .team {
+      max-width: 1000px;
+      margin: auto;
+      padding: 4rem 1.5rem;
+      text-align: center;
+    }
+    .team h2 { color: #344e41; margin-bottom: 2rem; }
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+    }
+    .team-card {
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+    .team-card h3 { color: #344e41; }
+    .team-card p { color: #6b7a7e; margin-top: 0.4rem; }
+
+    .social {
+      text-align: center;
+      padding: 2rem 1.5rem 4rem;
+    }
+    .social a {
+      display: inline-block;
+      margin-top: 1rem;
+      background: #3a5a40;
+      color: #ffffff;
+      padding: 0.8rem 1.6rem;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    footer {
+      background: #344e41;
+      color: #ffffff;
+      padding: 2rem 1.5rem;
+    }
+    .footer-content {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .team-grid { grid-template-columns: 1fr 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo">ZenMind</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="meditation.html">Meditation</a>
+      <a href="community.html">Community</a>
+      <a href="book-therapist.html">Book a Therapist</a>
+      <a href="about.html">About</a>
+      <a href="#">Login</a>
+    </div>
+    <a href="meditation.html" class="cta-btn">Get Started</a>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>About ZenMind</h1>
+  <p>Empowering minds. Supporting journeys. Creating calm.</p>
+</section>
+
+<section class="mission">
+  <h2>Our Mission</h2>
+  <p>
+    At ZenMind, our mission is to make mental health support accessible, relatable, and stigma-free for everyone. 
+    We believe that emotional well-being should not be a luxury, but a basic right.
+  </p>
+  <p>
+    We are building a supportive digital space where individuals can find calm through mindfulness tools, 
+    connect with others through anonymous community support, and access professional help when they need it.
+  </p>
+  <p>
+    Whether you're dealing with daily stress, academic pressure, relationship struggles, or deeper emotional challenges, 
+    ZenMind is here to walk alongside you on your journey toward balance and resilience.
+  </p>
+</section>
+
+<section class="team">
+  <h2>Meet the ZenMind Team</h2>
+  <div class="team-grid">
+    <div class="team-card">
+      <h3>Maanas Verma</h3>
+    </div>
+    <div class="team-card">
+      <h3>Shubhangi Saxena</h3>
+    </div>
+    <div class="team-card">
+      <h3>Akshra Jain</h3>
+    </div>
+    <div class="team-card">
+      <h3>Ayushi Mishra</h3>
+    </div>
+  </div>
+</section>
+
+<section class="social">
+  <h2>Follow Our Journey</h2>
+  <p>Stay connected with ZenMind on Instagram for updates, resources, and community stories.</p>
+  <a href="https://www.instagram.com/zenminds01/" target="_blank">Follow us on Instagram</a>
+</section>
+
+<footer>
+  <div class="footer-content">
+    <div>
+      <strong>ZenMind</strong>
+      <p>Find your calm. Grow your mind.</p>
+    </div>
+    <div>
+      <p>
+        <a href="about.html">About</a> · 
+        <a href="meditation.html">Meditation</a> · 
+        <a href="community.html">Community</a> · 
+        <a href="book-therapist.html">Therapist</a>
+      </p>
+      <p>Privacy · Terms</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
