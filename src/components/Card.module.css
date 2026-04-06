@@ -1,0 +1,33 @@
+.card {
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(172, 179, 178, 0.15); /* Ghost border fallback */
+}
+
+/* Elevations */
+.elevation-1 {
+  background-color: var(--surface-container-low);
+}
+
+.elevation-2 {
+  background-color: var(--surface-container-lowest);
+  box-shadow: 0 12px 40px -12px rgba(45, 52, 51, 0.08); /* Ambient shadow */
+}
+
+.elevation-3 {
+  background-color: var(--surface-container-high);
+}
+
+/* Roundedness */
+.radius-md {
+  border-radius: var(--radius-md);
+}
+
+.radius-lg {
+  border-radius: var(--radius-lg);
+}
+
+.radius-xl {
+  border-radius: var(--radius-xl);
+}

@@ -1,0 +1,188 @@
+.page {
+  padding: var(--spacing-8) 0;
+}
+
+.header {
+  margin-bottom: var(--spacing-8);
+}
+
+.header p {
+  font-size: 1.125rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-8);
+}
+
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: 360px 1fr;
+  }
+}
+
+.timerCard {
+  padding: var(--spacing-8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--spacing-6);
+}
+
+.timerDisplay {
+  position: relative;
+  width: 240px;
+  height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-6);
+}
+
+.progressRing {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.ringBg {
+  fill: transparent;
+  stroke: var(--surface-container);
+  stroke-width: 8;
+}
+
+.ringProgress {
+  fill: transparent;
+  stroke: var(--primary);
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 339; /* 2 * pi * r (r=54) */
+  transition: stroke-dashoffset 1s linear;
+}
+
+.timeText {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--on-surface);
+  z-index: 10;
+  letter-spacing: -0.02em;
+}
+
+.presets {
+  display: flex;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-8);
+}
+
+.presetBtn {
+  background: var(--surface-container);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  color: var(--on-surface-variant);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.presetBtn:hover {
+  background: var(--primary-container);
+  color: var(--primary-dim);
+}
+
+.timerControls {
+  display: flex;
+  gap: var(--spacing-4);
+  width: 100%;
+}
+
+.playBtn {
+  flex: 1;
+  gap: 0.5rem;
+}
+
+/* Checklist */
+.checklistCard {
+  padding: var(--spacing-6);
+}
+
+.checklistCard h3 {
+  font-size: 1.125rem;
+  margin-bottom: var(--spacing-4);
+  color: var(--on-surface);
+}
+
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.checkItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  background: var(--surface);
+  transition: background 0.2s;
+}
+
+.checkItem:hover {
+  background: var(--surface-container);
+}
+
+.checkItem.completed span {
+  text-decoration: line-through;
+  color: var(--outline);
+}
+
+/* Guided Sessions */
+.sessionsSection h3 {
+  margin-bottom: var(--spacing-6);
+}
+
+.sessionCards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.sessionCard {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-4);
+  gap: var(--spacing-4);
+  background: var(--surface-container-lowest);
+  border: 1px solid rgba(172, 179, 178, 0.15); /* ghost border */
+}
+
+.sessionCard:hover {
+  background: var(--surface-container-low);
+}
+
+.sessionImg {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-md);
+}
+
+.sessionInfo {
+  flex: 1;
+}
+
+.sessionInfo h4 {
+  font-size: 1.125rem;
+  margin-bottom: 0.25rem;
+}
+
+.sessionInfo span {
+  font-size: 0.875rem;
+  color: var(--on-surface-variant);
+}
