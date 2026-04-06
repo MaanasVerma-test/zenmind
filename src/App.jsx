@@ -10,6 +10,8 @@ import Home from './pages/Home';
 import Meditation from './pages/Meditation';
 import Community from './pages/Community';
 import Therapists from './pages/Therapists';
+import TherapistDetails from './pages/TherapistDetails';
+import Talk from './pages/Talk';
 import About from './pages/About';
 
 function AnimatedRoutes() {
@@ -22,6 +24,8 @@ function AnimatedRoutes() {
         <Route path="/meditation" element={<Meditation />} />
         <Route path="/community" element={<Community />} />
         <Route path="/therapists" element={<Therapists />} />
+        <Route path="/therapists/:id" element={<TherapistDetails />} />
+        <Route path="/talk" element={<Talk />} />
         <Route path="/about" element={<About />} />
       </Routes>
     </AnimatePresence>

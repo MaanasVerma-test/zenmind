@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '../components/Card';
 import { Button } from '../components/Button';
 import styles from './Therapists.module.css';
 import { Search, Star, MessageSquare } from 'lucide-react';
+import { therapists } from '../data/therapists';
 
 const pageVariants = {
   initial: { opacity: 0 },
@@ -14,15 +16,10 @@ const pageVariants = {
 
 export default function Therapists() {
   const [activeTab, setActiveTab] = useState('All');
+  const navigate = useNavigate();
 
-  const therapists = [
-    { id: 1, name: 'Dr. Ananya Sharma', specialty: 'Clinical Psychologist', rating: 4.9, reviews: 124, sessions: '1k+', price: '₹1,500', available: 'Today', imageRef: 'var(--primary-container)' },
-    { id: 2, name: 'Rahul Verma, MA', specialty: 'Counseling Psychologist', rating: 4.8, reviews: 89, sessions: '800+', price: '₹1,200', available: 'Tomorrow', imageRef: 'var(--secondary-container)' },
-    { id: 3, name: 'Dr. Priya Patel', specialty: 'Psychotherapist', rating: 5.0, reviews: 210, sessions: '2k+', price: '₹2,500', available: 'Mon, 12 Oct', imageRef: 'var(--tertiary-container)' }
-  ];
-
-  const handleBook = (name) => {
-    toast.success(`Booking request sent to ${name}. They will confirm shortly.`);
+  const handleBook = (id) => {
+    navigate(`/therapists/${id}`);
   };
 
   const tabs = ['All', 'Psychologists', 'Psychotherapists', 'Counselors'];
@@ -96,7 +93,7 @@ export default function Therapists() {
                   <span className={styles.price}>{t.price}</span>
                   <span className={styles.availability}>Next: {t.available}</span>
                 </div>
-                <Button size="sm" onClick={() => handleBook(t.name)}>Book</Button>
+                <Button size="sm" onClick={() => handleBook(t.id)}>Book</Button>
               </div>
             </Card>
           </motion.div>
