@@ -10,6 +10,12 @@ export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  
+  // Extra signup fields
+  const [name, setName] = useState('');
+  const [age, setAge] = useState('');
+  const [gender, setGender] = useState('');
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
@@ -29,14 +35,15 @@ export default function Auth() {
         if (error) throw error;
         navigate('/'); // Redirect to home on success
       } else {
-        const { error, data } = await register(email, password);
+        const metadata = { full_name: name, age: parseInt(age, 10), gender };
+        const { error, data } = await register(email, password, metadata);
         if (error) throw error;
         
         // Sometimes Supabase requires email verification
         if (data?.user?.identities?.length === 0) {
             setError("Email address is already taken.");
         } else {
-            setMessage('Registration successful! Please check your email to verify your account if required, or you log in directly.');
+            setMessage('Registration successful! Please check your email to verify your account if required, or you can log in directly.');
             setIsLogin(true);
             setPassword('');
         }
@@ -66,6 +73,58 @@ export default function Auth() {
         {message && <div className={styles.successBox}>{message}</div>}
 
         <form onSubmit={handleSubmit} className={styles.authForm}>
+          {!isLogin && (
+            <>
+              <div className={styles.inputGroup}>
+                <label htmlFor="name">Full Name</label>
+                <input
+                  id="name"
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="John Doe"
+                  disabled={loading}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className={styles.inputGroup}>
+                  <label htmlFor="age">Age</label>
+                  <input
+                    id="age"
+                    type="number"
+                    required
+                    min="13"
+                    max="120"
+                    value={age}
+                    onChange={(e) => setAge(e.target.value)}
+                    placeholder="25"
+                    disabled={loading}
+                  />
+                </div>
+
+                <div className={styles.inputGroup}>
+                  <label htmlFor="gender">Gender</label>
+                  <select
+                    id="gender"
+                    required
+                    value={gender}
+                    onChange={(e) => setGender(e.target.value)}
+                    disabled={loading}
+                    className={styles.selectInput}
+                  >
+                    <option value="" disabled>Select</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="non-binary">Non-binary</option>
+                    <option value="prefer-not-to-say">Prefer not to say</option>
+                  </select>
+                </div>
+              </div>
+            </>
+          )}
+
           <div className={styles.inputGroup}>
             <label htmlFor="email">Email address</label>
             <input

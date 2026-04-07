@@ -96,9 +96,27 @@
   box-shadow: 0 0 0 3px var(--primary-container);
 }
 
-.inputGroup input:disabled {
+.inputGroup input:disabled,
+.selectInput:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+}
+
+.selectInput {
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--outline-variant);
+  background-color: var(--surface);
+  color: var(--on-surface);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.selectInput:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-container);
 }
 
 .submitBtn {
