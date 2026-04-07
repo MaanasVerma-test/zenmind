@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Send, User, Sparkles, Brain, ShieldCheck, RefreshCw } from 'lucide-react';
 import styles from './Zena.module.css';
 
-const GEMINI_API_KEY = 'AIzaSyCRx1gROXQPWCMrX-8BWFXAepJtRN9Nma8';
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 const pageVariants = {
