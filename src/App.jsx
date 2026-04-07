@@ -12,6 +12,7 @@ import Community from './pages/Community';
 import Therapists from './pages/Therapists';
 import TherapistDetails from './pages/TherapistDetails';
 import Talk from './pages/Talk';
+import Zena from './pages/Zena';
 import About from './pages/About';
 
 function AnimatedRoutes() {
@@ -26,6 +27,7 @@ function AnimatedRoutes() {
         <Route path="/therapists" element={<Therapists />} />
         <Route path="/therapists/:id" element={<TherapistDetails />} />
         <Route path="/talk" element={<Talk />} />
+        <Route path="/zena" element={<Zena />} />
         <Route path="/about" element={<About />} />
       </Routes>
     </AnimatePresence>

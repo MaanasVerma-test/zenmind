@@ -49,6 +49,12 @@ export const Navigation = () => {
             Talk
           </NavLink>
           <NavLink 
+            to="/zena" 
+            className={({ isActive }) => clsx(styles.link, isActive && styles.active)}
+          >
+            Talk to Zena
+          </NavLink>
+          <NavLink 
             to="/about" 
             className={({ isActive }) => clsx(styles.link, isActive && styles.active)}
           >
