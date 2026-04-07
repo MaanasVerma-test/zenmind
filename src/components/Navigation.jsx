@@ -1,13 +1,16 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import styles from './Navigation.module.css';
-import { Leaf, Moon, Sun } from 'lucide-react';
+import { Leaf, Moon, Sun, LogOut } from 'lucide-react';
 import { clsx } from 'clsx';
 import { Button } from './Button';
 import { useTheme } from '../providers/ThemeProvider';
+import { useAuth } from '../providers/AuthProvider';
 
 export const Navigation = () => {
   const { theme, toggleTheme } = useTheme();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <header className={styles.header}>
@@ -70,7 +73,27 @@ export const Navigation = () => {
           >
             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
           </button>
-          <Button variant="primary" size="sm">Get Started</Button>
+          
+          {user ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <span className={styles.userEmail} style={{ fontSize: '0.85rem', color: 'var(--on-surface-variant)', display: 'none' }}>
+                {user.email}
+              </span>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={async () => {
+                  await logout();
+                  navigate('/auth');
+                }}
+              >
+                <LogOut size={16} style={{ marginRight: '0.5rem' }} />
+                Sign Out
+              </Button>
+            </div>
+          ) : (
+             <Button variant="primary" size="sm" onClick={() => navigate('/auth')}>Sign In</Button>
+          )}
         </div>
       </div>
     </header>

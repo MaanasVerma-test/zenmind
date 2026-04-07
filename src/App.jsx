@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { Navigation } from './components/Navigation';
 import { ThemeProvider } from './providers/ThemeProvider';
+import { AuthProvider } from './providers/AuthProvider';
 import { Toaster } from 'sonner';
 
 // Pages
@@ -14,6 +15,7 @@ import TherapistDetails from './pages/TherapistDetails';
 import Talk from './pages/Talk';
 import Zena from './pages/Zena';
 import About from './pages/About';
+import Auth from './pages/Auth';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -22,6 +24,7 @@ function AnimatedRoutes() {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Home />} />
+        <Route path="/auth" element={<Auth />} />
         <Route path="/meditation" element={<Meditation />} />
         <Route path="/community" element={<Community />} />
         <Route path="/therapists" element={<Therapists />} />
@@ -36,23 +39,25 @@ function AnimatedRoutes() {
 
 function App() {
   return (
-    <ThemeProvider>
-      <Toaster position="bottom-right" toastOptions={{
-        style: {
-          background: 'var(--surface-container-highest)',
-          color: 'var(--on-surface)',
-          border: '1px solid var(--outline-variant)'
-        }
-      }} />
-      <BrowserRouter>
-        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-          <Navigation />
-          <main style={{ flex: 1 }}>
-            <AnimatedRoutes />
-          </main>
-        </div>
-      </BrowserRouter>
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider>
+        <Toaster position="bottom-right" toastOptions={{
+          style: {
+            background: 'var(--surface-container-highest)',
+            color: 'var(--on-surface)',
+            border: '1px solid var(--outline-variant)'
+          }
+        }} />
+        <BrowserRouter>
+          <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+            <Navigation />
+            <main style={{ flex: 1 }}>
+              <AnimatedRoutes />
+            </main>
+          </div>
+        </BrowserRouter>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
 
