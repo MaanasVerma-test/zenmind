@@ -254,10 +254,7 @@ export default function Zena() {
             <ShieldCheck size={16} />
             Private & Secure
         </div>
-         <div className={styles.featureChip}>
-            <Brain size={16} />
-            Powered by Google Gemini
-        </div>
+
       </motion.div>
     </motion.div>
   );
