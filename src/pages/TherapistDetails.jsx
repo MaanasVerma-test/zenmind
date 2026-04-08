@@ -6,6 +6,7 @@ import { Star, MessageSquare, ArrowLeft, Calendar, Clock, Globe, GraduationCap }
 import { Button } from '../components/Button';
 import styles from './TherapistDetails.module.css';
 import { therapists } from '../data/therapists';
+import { useAuth } from '../providers/AuthProvider';
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -16,16 +17,21 @@ const pageVariants = {
 export default function TherapistDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [therapist, setTherapist] = useState(null);
 
   useEffect(() => {
-    // Scroll to top when opening details
     window.scrollTo(0, 0);
     const found = therapists.find(t => t.id === parseInt(id));
     setTherapist(found);
   }, [id]);
 
   const handleBook = () => {
+    if (!user) {
+      toast.error('Please sign in to request a session.');
+      navigate('/auth');
+      return;
+    }
     toast.success(`Booking request sent to ${therapist.name}. They will confirm shortly.`);
   };
 

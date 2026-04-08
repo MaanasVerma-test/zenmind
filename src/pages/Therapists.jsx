@@ -7,6 +7,7 @@ import { Button } from '../components/Button';
 import styles from './Therapists.module.css';
 import { Search, Star, MessageSquare } from 'lucide-react';
 import { therapists } from '../data/therapists';
+import { useAuth } from '../providers/AuthProvider';
 
 const pageVariants = {
   initial: { opacity: 0 },
@@ -17,8 +18,14 @@ const pageVariants = {
 export default function Therapists() {
   const [activeTab, setActiveTab] = useState('All');
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleBook = (id) => {
+    if (!user) {
+      toast.error('Please sign in to book a therapist.');
+      navigate('/auth');
+      return;
+    }
     navigate(`/therapists/${id}`);
   };
 

@@ -320,3 +320,19 @@
   background-color: var(--outline-variant);
   border-radius: 10px;
 }
+
+.signInPrompt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.25rem 0;
+}
+
+.signInPrompt span {
+  font-size: 0.9rem;
+  color: var(--on-surface-variant);
+  font-weight: 500;
+}
+

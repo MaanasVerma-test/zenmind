@@ -1,7 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, User, Sparkles, Brain, ShieldCheck, RefreshCw } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Send, User, Sparkles, Brain, ShieldCheck, RefreshCw, LogIn } from 'lucide-react';
 import styles from './Zena.module.css';
+import { useAuth } from '../providers/AuthProvider';
+import { Button } from '../components/Button';
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
@@ -15,6 +18,8 @@ const pageVariants = {
 const SYSTEM_INSTRUCTION = "You are Zena, a warm, empathetic, and knowledgeable mental health AI companion. You belong to the ZenMind app. Your goal is to listen without judgment, validate the user's feelings, and provide gentle, evidence-based coping strategies if asked. You are NOT a substitute for professional therapy, and you should remind users of this if they mention self-harm or severe crises, guiding them to seek professional help. Keep your responses concise, conversational, and caring. Only use simple markdown like bold text or bullets when necessary for readability. Do not output large walls of text.";
 
 export default function Zena() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [messages, setMessages] = useState([
     {
       id: "welcome",
@@ -222,23 +227,35 @@ export default function Zena() {
 
           {/* Input */}
           <div className={styles.chatInputWrapper}>
-            <textarea
-              ref={textareaRef}
-              className={styles.chatInput}
-              placeholder="Share what's on your mind..."
-              value={input}
-              onChange={handleInput}
-              onKeyDown={handleKeyDown}
-              rows={1}
-            />
-            <button
-              className={styles.sendBtn}
-              onClick={sendMessage}
-              disabled={!input.trim() || isLoading}
-              aria-label="Send message"
-            >
-              <Send size={18} />
-            </button>
+            {user ? (
+              <>
+                <textarea
+                  ref={textareaRef}
+                  className={styles.chatInput}
+                  placeholder="Share what's on your mind..."
+                  value={input}
+                  onChange={handleInput}
+                  onKeyDown={handleKeyDown}
+                  rows={1}
+                />
+                <button
+                  className={styles.sendBtn}
+                  onClick={sendMessage}
+                  disabled={!input.trim() || isLoading}
+                  aria-label="Send message"
+                >
+                  <Send size={18} />
+                </button>
+              </>
+            ) : (
+              <div className={styles.signInPrompt}>
+                <span>Sign in to start chatting with Zena</span>
+                <Button variant="primary" size="sm" onClick={() => navigate('/auth')}>
+                  <LogIn size={16} style={{ marginRight: '0.5rem' }} />
+                  Sign In
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </motion.div>
