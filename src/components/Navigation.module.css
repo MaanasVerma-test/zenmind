@@ -2,8 +2,14 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  background-color: var(--surface);
-  border-bottom: 1px solid var(--outline-variant);
+  /* The exact result of 5% white layered over the dark mode surface */
+  background-color: #1a201f;
+  /* The exact result of 15% rgba(172, 179, 178) over the dark mode surface */
+  border-bottom: 1px solid #262c2b;
+}
+:global([data-theme='light']) .header {
+  background-color: rgb(248, 250, 249);
+  border-bottom: 1px solid rgb(236, 239, 238);
 }
 
 .navContainer {
@@ -90,4 +96,106 @@
 .themeToggle:hover {
   background: var(--surface-container-highest);
   color: var(--primary);
+}
+
+.hamburger {
+  display: flex;
+  background: transparent;
+  border: none;
+  color: var(--on-surface);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  margin-left: 0.5rem;
+}
+
+.mobileMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #1a201f;
+  border-bottom: 1px solid #262c2b;
+  padding: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  animation: slideDown 0.2s ease-out;
+}
+
+:global([data-theme='light']) .mobileMenu {
+  background-color: rgb(248, 250, 249);
+  border-bottom: 1px solid rgb(236, 239, 238);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.mobileNavLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mobileLink {
+  color: var(--on-surface-variant);
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.mobileLink:hover {
+  background-color: var(--surface-container-highest);
+  color: var(--primary);
+}
+
+.mobileLink.activeMobile {
+  background-color: var(--surface-container-high);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.mobileAuthActions {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #262c2b;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+:global([data-theme='light']) .mobileAuthActions {
+  border-top: 1px solid rgb(236, 239, 238);
+}
+
+.mobileUserEmail {
+  font-size: 0.85rem;
+  color: var(--on-surface-variant);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.desktopAuth {
+  display: none;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 768px) {
+  .hamburger {
+    display: none;
+  }
+  .desktopAuth {
+    display: flex;
+  }
 }
