@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '../components/Card';
 import { Button } from '../components/Button';
+import { useAuth } from '../providers/AuthProvider';
 import styles from './Talk.module.css';
 import {
   Headphones, ShieldCheck, Clock, Heart, Star,
-  Send, X, MessageCircle, Users, Sparkles
+  Send, X, MessageCircle, Users, Sparkles, LogIn
 } from 'lucide-react';
 
 const pageVariants = {
@@ -76,10 +78,13 @@ const autoReplies = [
 ];
 
 export default function Talk() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [activeChat, setActiveChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const chatBodyRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -93,6 +98,10 @@ export default function Talk() {
   }, [messages, isTyping]);
 
   const openChat = (listener) => {
+    if (!user) {
+      setShowAuthPrompt(true);
+      return;
+    }
     setActiveChat(listener);
     setMessages([{ text: listener.greeting, from: 'listener' }]);
     setInput('');
@@ -330,6 +339,52 @@ export default function Talk() {
                 >
                   <Send size={18} />
                 </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ─── Auth Prompt Modal ─── */}
+      <AnimatePresence>
+        {showAuthPrompt && (
+          <motion.div
+            className={styles.chatOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowAuthPrompt(false)}
+          >
+            <motion.div
+              className={styles.authPromptModal}
+              initial={{ scale: 0.9, opacity: 0, y: 30 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 30 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className={styles.closeBtn}
+                onClick={() => setShowAuthPrompt(false)}
+                aria-label="Close prompt"
+                style={{ position: 'absolute', top: '1rem', right: '1rem' }}
+              >
+                <X size={20} />
+              </button>
+              <div className={styles.authPromptIcon}>
+                <LogIn size={36} />
+              </div>
+              <h3 className={styles.authPromptTitle}>Sign in to continue</h3>
+              <p className={styles.authPromptText}>
+                You need to sign in or create an account before you can start a conversation with a listener.
+              </p>
+              <div className={styles.authPromptActions}>
+                <Button variant="primary" onClick={() => navigate('/auth')}>
+                  Sign In / Sign Up
+                </Button>
+                <Button variant="secondary" onClick={() => setShowAuthPrompt(false)}>
+                  Maybe Later
+                </Button>
               </div>
             </motion.div>
           </motion.div>
