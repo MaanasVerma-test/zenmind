@@ -337,10 +337,10 @@ export default function Meditation() {
 
           <Card className={styles.videoCard}>
             <div className={styles.videoWrapper}>
-              <iframe src="https://www.youtube.com/embed/aEqlQvczMMk" title="10 Minute Guided Meditation for Sleep" frameBorder="0" allowFullScreen></iframe>
+              <iframe src="https://www.youtube.com/embed/C4bofW53sO8" title="Deep guided meditation in 15 minutes" frameBorder="0" allowFullScreen></iframe>
             </div>
             <div className={styles.videoInfo}>
-              <h4>10 Minute Sleep Induction</h4>
+              <h4>Deep guided meditation in 15 minutes</h4>
               <span>Great Meditation</span>
             </div>
           </Card>
