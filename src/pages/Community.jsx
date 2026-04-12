@@ -1,11 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { Card } from '../components/Card';
 import { Button } from '../components/Button';
 import styles from './Community.module.css';
-import { MessageCircle, Heart, Share2, Plus, X, Send, ArrowLeft } from 'lucide-react';
+import { MessageCircle, Heart, Share2, Plus, X, Send, ArrowLeft, Loader } from 'lucide-react';
 import { clsx } from 'clsx';
+import { useAuth } from '../providers/AuthProvider';
+import { useNavigate } from 'react-router-dom';
+import {
+  fetchPosts,
+  createPost,
+  toggleLike,
+  fetchLikesForPosts,
+  fetchCommentsForPosts,
+  createComment,
+  timeAgo
+} from '../lib/database';
 
 const pageVariants = {
   initial: { opacity: 0 },
@@ -14,92 +25,146 @@ const pageVariants = {
 };
 
 export default function Community() {
-  const [posts, setPosts] = useState(() => {
-    const saved = localStorage.getItem('zenmind_posts_v3');
-    if (saved) return JSON.parse(saved);
-    return [
-      { id: 1, groupId: null, author: 'Anonymous Explorer', time: '2h ago', content: 'Just finished my first 15-minute session without getting completely distracted. Small wins matter!', likes: 24, userLiked: false, comments: [] },
-      { id: 2, groupId: null, author: 'Mindful Soul', time: '5h ago', content: 'Does anyone else find the morning manifestation pulse particularly helpful on Mondays? Sets the tone for the week.', likes: 42, userLiked: false, comments: [] },
-      
-      // Anxiety Support (g1)
-      { id: 3, groupId: 'g1', author: 'Calm Seeker', time: '1h ago', content: 'Breathing exercises are really helping calm my racing thoughts today. Highly recommend 4-7-8 breathing.', likes: 55, userLiked: false, comments: [] },
-      { id: 4, groupId: 'g1', author: 'Anonymous', time: 'Yesterday', content: 'Does anyone have tips for sudden panic before a big presentation?', likes: 12, userLiked: false, comments: [{id: 111, author: 'Peer', text:'Grounding! Focus on 5 things you can see.'}] },
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
-      // Mindful Beginners (g2)
-      { id: 5, groupId: 'g2', author: 'Journey Starter', time: '3h ago', content: 'I keep falling asleep during meditation. Is this normal?', likes: 18, userLiked: false, comments: [{id:112, author:'Guide', text:'Absolutely normal! Your body is relaxing.'}] },
-
-      // Sleep Sanctuary (g3)
-      { id: 6, groupId: 'g3', author: 'Restless Mind', time: 'Last night', content: 'The sleep stories feature puts me out like a light. Goodnight everyone.', likes: 89, userLiked: false, comments: [] }
-    ];
-  });
+  const [posts, setPosts] = useState([]);
+  const [likeCounts, setLikeCounts] = useState({});
+  const [userLiked, setUserLiked] = useState({});
+  const [commentsMap, setCommentsMap] = useState({});
+  const [loading, setLoading] = useState(true);
 
   const [activeGroupId, setActiveGroupId] = useState(null);
   const [composerOpen, setComposerOpen] = useState(false);
   const [newPost, setNewPost] = useState('');
+  const [posting, setPosting] = useState(false);
   
   const [activeCommentPostId, setActiveCommentPostId] = useState(null);
   const [newComment, setNewComment] = useState('');
+  const [commentingPostId, setCommentingPostId] = useState(null);
 
+  // Groups stay hardcoded per user's request
   const [groups, setGroups] = useState([
     { id: 'g1', name: 'Anxiety Support', members: 120, color: 'var(--tertiary-container)', joined: true },
     { id: 'g2', name: 'Mindful Beginners', members: 340, color: 'var(--secondary-container)', joined: false },
     { id: 'g3', name: 'Sleep Sanctuary', members: 89, color: 'var(--primary-container)', joined: false }
   ]);
 
-  useEffect(() => {
-    localStorage.setItem('zenmind_posts_v3', JSON.stringify(posts));
-  }, [posts]);
-
-  // Derive which posts to show based on active group mode
-  const displayedPosts = posts.filter(p => activeGroupId === 'all' ? true : p.groupId === activeGroupId);
   const activeGroupData = activeGroupId ? groups.find(g => g.id === activeGroupId) : null;
 
-  const handlePost = () => {
-    if (!newPost.trim()) return;
-    const post = {
-      id: Date.now(),
-      groupId: activeGroupId, 
-      author: 'You (Anonymous)',
-      time: 'Just now',
-      content: newPost,
-      likes: 0,
-      userLiked: false,
-      comments: []
-    };
-    setPosts([post, ...posts]);
-    setNewPost('');
-    setComposerOpen(false);
-    toast.success(activeGroupId ? `Posted in ${activeGroupData.name}` : 'Shared with the global sanctuary.');
-  };
+  // ─── Load data ───
+  const loadData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const postsData = await fetchPosts(activeGroupId);
+      setPosts(postsData);
 
-  const handleLike = (id) => {
-    setPosts(posts.map(p => {
-      if (p.id === id) {
-        return { ...p, likes: p.userLiked ? p.likes - 1 : p.likes + 1, userLiked: !p.userLiked };
+      if (postsData.length > 0) {
+        const postIds = postsData.map(p => p.id);
+        const [likesResult, commentsResult] = await Promise.all([
+          fetchLikesForPosts(postIds),
+          fetchCommentsForPosts(postIds)
+        ]);
+        setLikeCounts(likesResult.counts);
+        setUserLiked(likesResult.userLiked);
+        setCommentsMap(commentsResult);
+      } else {
+        setLikeCounts({});
+        setUserLiked({});
+        setCommentsMap({});
       }
-      return p;
-    }));
+    } catch (err) {
+      console.error('Failed to load community data:', err);
+      toast.error('Failed to load posts. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }, [activeGroupId]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  // ─── Post ───
+  const handlePost = async () => {
+    if (!newPost.trim()) return;
+    if (!user) {
+      toast.error('Please sign in to post.');
+      navigate('/auth');
+      return;
+    }
+
+    setPosting(true);
+    try {
+      const authorName = user.user_metadata?.full_name || 'Anonymous';
+      await createPost(newPost, activeGroupId, authorName);
+      setNewPost('');
+      setComposerOpen(false);
+      toast.success(activeGroupId ? `Posted in ${activeGroupData.name}` : 'Shared with the global sanctuary.');
+      await loadData();
+    } catch (err) {
+      console.error('Failed to create post:', err);
+      toast.error('Failed to post. Please try again.');
+    } finally {
+      setPosting(false);
+    }
   };
 
+  // ─── Like ───
+  const handleLike = async (postId) => {
+    if (!user) {
+      toast.error('Please sign in to like posts.');
+      navigate('/auth');
+      return;
+    }
+
+    // Optimistic update
+    const wasLiked = userLiked[postId];
+    setUserLiked(prev => ({ ...prev, [postId]: !wasLiked }));
+    setLikeCounts(prev => ({ ...prev, [postId]: (prev[postId] || 0) + (wasLiked ? -1 : 1) }));
+
+    try {
+      await toggleLike(postId);
+    } catch (err) {
+      // Revert optimistic update
+      setUserLiked(prev => ({ ...prev, [postId]: wasLiked }));
+      setLikeCounts(prev => ({ ...prev, [postId]: (prev[postId] || 0) + (wasLiked ? 1 : -1) }));
+      toast.error('Failed to update like.');
+    }
+  };
+
+  // ─── Comments ───
   const toggleComments = (id) => {
     setActiveCommentPostId(activeCommentPostId === id ? null : id);
     setNewComment('');
   };
 
-  const handleCommentSubmit = (postId) => {
+  const handleCommentSubmit = async (postId) => {
     if (!newComment.trim()) return;
-    setPosts(posts.map(p => {
-      if (p.id === postId) {
-        return { 
-          ...p, 
-          comments: [...p.comments, { id: Date.now(), author: 'You', text: newComment }] 
-        };
-      }
-      return p;
-    }));
-    setNewComment('');
+    if (!user) {
+      toast.error('Please sign in to comment.');
+      navigate('/auth');
+      return;
+    }
+
+    setCommentingPostId(postId);
+    try {
+      const authorName = user.user_metadata?.full_name || 'Anonymous';
+      const comment = await createComment(postId, newComment, authorName);
+      setCommentsMap(prev => ({
+        ...prev,
+        [postId]: [...(prev[postId] || []), comment]
+      }));
+      setNewComment('');
+    } catch (err) {
+      console.error('Failed to create comment:', err);
+      toast.error('Failed to comment. Please try again.');
+    } finally {
+      setCommentingPostId(null);
+    }
   };
 
+  // ─── Groups (stay local) ───
   const handleJoinGroup = (groupId) => {
     setGroups(groups.map(g => {
       if (g.id === groupId) {
@@ -168,7 +233,7 @@ export default function Community() {
                 <Card className={styles.composerCard}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                     <span style={{ fontSize: '0.875rem', color: 'var(--primary)' }}>
-                      Posting as Anonymous {activeGroupData ? `in ${activeGroupData.name}` : '(Global)'}
+                      Posting as {user?.user_metadata?.full_name || 'Anonymous'} {activeGroupData ? `in ${activeGroupData.name}` : '(Global)'}
                     </span>
                     <button onClick={() => setComposerOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--on-surface-variant)' }}><X size={16} /></button>
                   </div>
@@ -181,108 +246,127 @@ export default function Community() {
                     autoFocus
                   ></textarea>
                   <div className={styles.composerActions}>
-                    <Button size="sm" onClick={handlePost}>Post</Button>
+                    <Button size="sm" onClick={handlePost} disabled={posting || !newPost.trim()}>
+                      {posting ? 'Posting...' : 'Post'}
+                    </Button>
                   </div>
                 </Card>
               </motion.div>
             )}
           </AnimatePresence>
 
-          <motion.div 
-            className={styles.feed}
-            initial="hidden"
-            animate="show"
-            variants={{
-              hidden: { opacity: 0 },
-              show: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
-            }}
-          >
-            <AnimatePresence mode="popLayout">
-              {displayedPosts.length === 0 ? (
-                <motion.div 
-                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                  style={{ textAlign: 'center', padding: '3rem', color: 'var(--on-surface-variant)' }}
-                >
-                  <p>No thoughts shared here yet. Be the first!</p>
-                </motion.div>
-              ) : (
-                displayedPosts.map(post => (
+          {/* Loading State */}
+          {loading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem', color: 'var(--on-surface-variant)' }}>
+              <Loader size={24} className="spin" style={{ animation: 'spin 1s linear infinite' }} />
+            </div>
+          ) : (
+            <motion.div 
+              className={styles.feed}
+              initial="hidden"
+              animate="show"
+              variants={{
+                hidden: { opacity: 0 },
+                show: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
+              }}
+            >
+              <AnimatePresence mode="popLayout">
+                {posts.length === 0 ? (
                   <motion.div 
-                    key={post.id}
-                    variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
-                    layout
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    style={{ textAlign: 'center', padding: '3rem', color: 'var(--on-surface-variant)' }}
                   >
-                    <Card className={styles.postCard}>
-                      <div className={styles.postHeader}>
-                        <div className={styles.avatar}></div>
-                        <div>
-                          <h4 className={styles.author}>{post.author}</h4>
-                          <span className={styles.time}>{post.time}</span>
-                        </div>
-                      </div>
-                      <p className={styles.postContent}>{post.content}</p>
-                      <div className={styles.postActions}>
-                        <motion.button 
-                          className={clsx(styles.actionBtn, post.userLiked && styles.actionLiked)}
-                          onClick={() => handleLike(post.id)}
-                          whileTap={{ scale: 0.8 }}
-                        >
-                          <Heart size={18} fill={post.userLiked ? 'var(--error)' : 'none'} color={post.userLiked ? 'var(--error)' : 'currentColor'} />
-                          <span>{post.likes}</span>
-                        </motion.button>
-                        <button 
-                          className={clsx(styles.actionBtn, activeCommentPostId === post.id && styles.actionActive)} 
-                          onClick={() => toggleComments(post.id)}
-                        >
-                          <MessageCircle size={18} />
-                          <span>{post.comments.length}</span>
-                        </button>
-                        <button className={styles.actionBtn} onClick={() => toast("Link copied to clipboard!")}>
-                          <Share2 size={18} />
-                        </button>
-                      </div>
-
-                      <AnimatePresence>
-                        {activeCommentPostId === post.id && (
-                          <motion.div 
-                            className={styles.commentsSection}
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            style={{ overflow: 'hidden' }}
-                          >
-                            <div className={styles.commentList}>
-                              {post.comments.map(comment => (
-                                <div key={comment.id} className={styles.commentItem}>
-                                  <strong>{comment.author}</strong> {comment.text}
-                                </div>
-                              ))}
-                            </div>
-                            <div className={styles.commentInputRow}>
-                              <input 
-                                type="text" 
-                                placeholder="Write a supportive comment..." 
-                                value={newComment}
-                                onChange={(e) => setNewComment(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && handleCommentSubmit(post.id)}
-                                className={styles.commentInput}
-                              />
-                              <button className={styles.commentSubmitBtn} onClick={() => handleCommentSubmit(post.id)}>
-                                <Send size={16} />
-                              </button>
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </Card>
+                    <p>No thoughts shared here yet. Be the first!</p>
                   </motion.div>
-                ))
-              )}
-            </AnimatePresence>
-          </motion.div>
+                ) : (
+                  posts.map(post => {
+                    const postComments = commentsMap[post.id] || [];
+                    const likes = likeCounts[post.id] || 0;
+                    const liked = userLiked[post.id] || false;
+
+                    return (
+                      <motion.div 
+                        key={post.id}
+                        variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
+                        layout
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                      >
+                        <Card className={styles.postCard}>
+                          <div className={styles.postHeader}>
+                            <div className={styles.avatar}></div>
+                            <div>
+                              <h4 className={styles.author}>{post.author_name}</h4>
+                              <span className={styles.time}>{timeAgo(post.created_at)}</span>
+                            </div>
+                          </div>
+                          <p className={styles.postContent}>{post.content}</p>
+                          <div className={styles.postActions}>
+                            <motion.button 
+                              className={clsx(styles.actionBtn, liked && styles.actionLiked)}
+                              onClick={() => handleLike(post.id)}
+                              whileTap={{ scale: 0.8 }}
+                            >
+                              <Heart size={18} fill={liked ? 'var(--error)' : 'none'} color={liked ? 'var(--error)' : 'currentColor'} />
+                              <span>{likes}</span>
+                            </motion.button>
+                            <button 
+                              className={clsx(styles.actionBtn, activeCommentPostId === post.id && styles.actionActive)} 
+                              onClick={() => toggleComments(post.id)}
+                            >
+                              <MessageCircle size={18} />
+                              <span>{postComments.length}</span>
+                            </button>
+                            <button className={styles.actionBtn} onClick={() => toast("Link copied to clipboard!")}>
+                              <Share2 size={18} />
+                            </button>
+                          </div>
+
+                          <AnimatePresence>
+                            {activeCommentPostId === post.id && (
+                              <motion.div 
+                                className={styles.commentsSection}
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                style={{ overflow: 'hidden' }}
+                              >
+                                <div className={styles.commentList}>
+                                  {postComments.map(comment => (
+                                    <div key={comment.id} className={styles.commentItem}>
+                                      <strong>{comment.author_name}</strong> {comment.content}
+                                    </div>
+                                  ))}
+                                </div>
+                                <div className={styles.commentInputRow}>
+                                  <input 
+                                    type="text" 
+                                    placeholder="Write a supportive comment..." 
+                                    value={newComment}
+                                    onChange={(e) => setNewComment(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleCommentSubmit(post.id)}
+                                    className={styles.commentInput}
+                                  />
+                                  <button 
+                                    className={styles.commentSubmitBtn} 
+                                    onClick={() => handleCommentSubmit(post.id)}
+                                    disabled={commentingPostId === post.id}
+                                  >
+                                    <Send size={16} />
+                                  </button>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </Card>
+                      </motion.div>
+                    );
+                  })
+                )}
+              </AnimatePresence>
+            </motion.div>
+          )}
         </div>
 
         <motion.aside 

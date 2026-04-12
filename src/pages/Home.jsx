@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '../components/Button';
@@ -6,6 +6,7 @@ import { Card } from '../components/Card';
 import styles from './Home.module.css';
 import { Sparkles, Users, Wind, MessageCircle, HeartPulse, ArrowRight } from 'lucide-react';
 import { clsx } from 'clsx';
+import { fetchSiteStats } from '../lib/database';
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -20,6 +21,11 @@ const itemVariants = {
 
 export default function Home() {
   const navigate = useNavigate();
+  const [stats, setStats] = useState({ member_count: '10k+', app_rating: '4.9/5' });
+
+  useEffect(() => {
+    fetchSiteStats().then(setStats).catch(console.error);
+  }, []);
 
   return (
     <motion.div 
@@ -59,14 +65,14 @@ export default function Home() {
             <div className={styles.statItem}>
               <Users size={20} className={styles.statIcon} />
               <div>
-                <strong>10k+</strong>
+                <strong>{stats.member_count}</strong>
                 <span>Active Members</span>
               </div>
             </div>
             <div className={styles.statItem}>
               <Sparkles size={20} className={styles.statIcon} />
               <div>
-                <strong>4.9/5</strong>
+                <strong>{stats.app_rating}</strong>
                 <span>App Rating</span>
               </div>
             </div>
