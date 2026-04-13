@@ -7,7 +7,7 @@ import { useAuth } from '../providers/AuthProvider';
 import styles from './Talk.module.css';
 import {
   Headphones, ShieldCheck, Clock, Heart, Star,
-  Send, X, MessageCircle, Users, Sparkles, LogIn
+  Send, X, MessageCircle, Users, Sparkles, LogIn, AlertTriangle
 } from 'lucide-react';
 
 const pageVariants = {
@@ -85,6 +85,7 @@ export default function Talk() {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [showDemoModal, setShowDemoModal] = useState(true);
   const chatBodyRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -386,6 +387,39 @@ export default function Talk() {
                   Maybe Later
                 </Button>
               </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ─── Demo Feature Modal ─── */}
+      <AnimatePresence>
+        {showDemoModal && (
+          <motion.div
+            className={styles.chatOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{ zIndex: 300 }}
+          >
+            <motion.div
+              className={styles.demoModal}
+              initial={{ scale: 0.85, opacity: 0, y: 40 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.85, opacity: 0, y: 40 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 26 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className={styles.demoIconWrapper}>
+                <AlertTriangle size={40} />
+              </div>
+              <h3 className={styles.demoTitle}>This is a Demo</h3>
+              <p className={styles.demoText}>
+                This feature is currently under development and will be available soon. Stay tuned for updates!
+              </p>
+              <Button variant="primary" onClick={() => setShowDemoModal(false)}>
+                Got it, Continue Browsing
+              </Button>
             </motion.div>
           </motion.div>
         )}

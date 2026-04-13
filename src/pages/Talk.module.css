@@ -519,3 +519,53 @@
   gap: 0.75rem;
   align-items: stretch;
 }
+
+/* ─── Demo Feature Modal ─── */
+.demoModal {
+  position: relative;
+  width: 90%;
+  max-width: 460px;
+  background: var(--surface-container-low);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-xl);
+  padding: 3rem 2.5rem 2.5rem;
+  text-align: center;
+  box-shadow: 0 24px 64px -16px rgba(0, 0, 0, 0.35),
+              0 0 0 1px rgba(255, 191, 0, 0.08);
+}
+
+.demoIconWrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.75rem;
+  box-shadow: 0 8px 24px -4px rgba(245, 158, 11, 0.35);
+  animation: demoPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes demoPulse {
+  0%, 100% { box-shadow: 0 8px 24px -4px rgba(245, 158, 11, 0.35); }
+  50% { box-shadow: 0 8px 32px -4px rgba(245, 158, 11, 0.55); }
+}
+
+.demoTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin-bottom: 0.75rem;
+}
+
+.demoText {
+  font-size: 1rem;
+  color: var(--on-surface-variant);
+  line-height: 1.7;
+  margin-bottom: 2rem;
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
+}

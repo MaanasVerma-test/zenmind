@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '../components/Card';
 import { Button } from '../components/Button';
 import styles from './Therapists.module.css';
-import { Search, Star, MessageSquare } from 'lucide-react';
+import { Search, Star, MessageSquare, AlertTriangle, X } from 'lucide-react';
 import { therapists } from '../data/therapists';
 import { useAuth } from '../providers/AuthProvider';
 
@@ -19,6 +19,7 @@ export default function Therapists() {
   const [activeTab, setActiveTab] = useState('All');
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [showDemoModal, setShowDemoModal] = useState(true);
 
   const handleBook = (id) => {
     if (!user) {
@@ -106,6 +107,38 @@ export default function Therapists() {
           </motion.div>
         ))}
       </motion.div>
+
+      {/* ─── Demo Feature Modal ─── */}
+      <AnimatePresence>
+        {showDemoModal && (
+          <motion.div
+            className={styles.demoOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className={styles.demoModal}
+              initial={{ scale: 0.85, opacity: 0, y: 40 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.85, opacity: 0, y: 40 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 26 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className={styles.demoIconWrapper}>
+                <AlertTriangle size={40} />
+              </div>
+              <h3 className={styles.demoTitle}>This is a Demo</h3>
+              <p className={styles.demoText}>
+                This feature is currently under development and will be available soon. Stay tuned for updates!
+              </p>
+              <Button variant="primary" onClick={() => setShowDemoModal(false)}>
+                Got it, Continue Browsing
+              </Button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
