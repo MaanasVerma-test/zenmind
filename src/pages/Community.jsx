@@ -15,7 +15,11 @@ import {
   fetchLikesForPosts,
   fetchCommentsForPosts,
   createComment,
-  timeAgo
+  timeAgo,
+  fetchPeerGroups,
+  fetchUserGroupMemberships,
+  joinGroup as joinGroupDB,
+  leaveGroup as leaveGroupDB
 } from '../lib/database';
 
 const pageVariants = {
@@ -43,12 +47,10 @@ export default function Community() {
   const [newComment, setNewComment] = useState('');
   const [commentingPostId, setCommentingPostId] = useState(null);
 
-  // Groups stay hardcoded per user's request
-  const [groups, setGroups] = useState([
-    { id: 'g1', name: 'Anxiety Support', members: 120, color: 'var(--tertiary-container)', joined: true },
-    { id: 'g2', name: 'Mindful Beginners', members: 340, color: 'var(--secondary-container)', joined: false },
-    { id: 'g3', name: 'Sleep Sanctuary', members: 89, color: 'var(--primary-container)', joined: false }
-  ]);
+  // Peer groups from Supabase
+  const [groups, setGroups] = useState([]);
+  const [joinedGroupIds, setJoinedGroupIds] = useState(new Set());
+  const [groupsLoading, setGroupsLoading] = useState(true);
 
   const activeGroupData = activeGroupId ? groups.find(g => g.id === activeGroupId) : null;
 
@@ -84,6 +86,33 @@ export default function Community() {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  // ─── Load peer groups ───
+  useEffect(() => {
+    const loadGroups = async () => {
+      setGroupsLoading(true);
+      try {
+        const [groupsData, memberships] = await Promise.all([
+          fetchPeerGroups(),
+          fetchUserGroupMemberships()
+        ]);
+        setGroups(groupsData);
+        setJoinedGroupIds(new Set(memberships));
+      } catch (err) {
+        console.error('Failed to load peer groups:', err);
+        // Fallback to hardcoded data if table doesn't exist
+        setGroups([
+          { id: 'g1', name: 'Anxiety Support', members: 120, color: 'var(--tertiary-container)' },
+          { id: 'g2', name: 'Mindful Beginners', members: 340, color: 'var(--secondary-container)' },
+          { id: 'g3', name: 'Sleep Sanctuary', members: 89, color: 'var(--primary-container)' }
+        ]);
+        setJoinedGroupIds(new Set());
+      } finally {
+        setGroupsLoading(false);
+      }
+    };
+    loadGroups();
+  }, [user]);
 
   // ─── Post ───
   const handlePost = async () => {
@@ -165,14 +194,53 @@ export default function Community() {
   };
 
   // ─── Groups (stay local) ───
-  const handleJoinGroup = (groupId) => {
-    setGroups(groups.map(g => {
-      if (g.id === groupId) {
-        if (!g.joined) toast.success(`Welcome to the ${g.name} group!`);
-        return { ...g, joined: !g.joined, members: g.joined ? g.members - 1 : g.members + 1 };
+  const handleJoinGroup = async (groupId) => {
+    if (!user) {
+      toast.error('Please sign in to join a group.');
+      navigate('/auth');
+      return;
+    }
+
+    const isJoined = joinedGroupIds.has(groupId);
+    const group = groups.find(g => g.id === groupId);
+
+    // Optimistic update
+    setJoinedGroupIds(prev => {
+      const next = new Set(prev);
+      if (isJoined) next.delete(groupId);
+      else next.add(groupId);
+      return next;
+    });
+    setGroups(prev => prev.map(g => 
+      g.id === groupId 
+        ? { ...g, members: (g.members || 0) + (isJoined ? -1 : 1) } 
+        : g
+    ));
+
+    if (!isJoined && group) toast.success(`Welcome to the ${group.name} group!`);
+
+    try {
+      if (isJoined) {
+        await leaveGroupDB(groupId);
+      } else {
+        await joinGroupDB(groupId);
       }
-      return g;
-    }));
+    } catch (err) {
+      console.error('Failed to update group membership:', err);
+      toast.error('Failed to update membership. Please try again.');
+      // Revert
+      setJoinedGroupIds(prev => {
+        const next = new Set(prev);
+        if (isJoined) next.add(groupId);
+        else next.delete(groupId);
+        return next;
+      });
+      setGroups(prev => prev.map(g => 
+        g.id === groupId 
+          ? { ...g, members: (g.members || 0) + (isJoined ? 1 : -1) } 
+          : g
+      ));
+    }
   };
 
   const navigateToGroup = (groupId) => {
@@ -395,11 +463,11 @@ export default function Community() {
                     <span>{group.members} members</span>
                   </div>
                   <Button 
-                    variant={group.joined ? "secondary" : "tertiary"} 
+                    variant={joinedGroupIds.has(group.id) ? "secondary" : "tertiary"} 
                     size="sm" 
                     onClick={() => handleJoinGroup(group.id)}
                   >
-                    {group.joined ? "Leave" : "Join"}
+                    {joinedGroupIds.has(group.id) ? "Leave" : "Join"}
                   </Button>
                 </div>
               ))}

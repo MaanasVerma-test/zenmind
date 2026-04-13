@@ -186,3 +186,58 @@ export async function fetchSiteStats() {
 
   return data;
 }
+
+// ─── Peer Groups ───
+
+export async function fetchPeerGroups() {
+  // Fetch groups with a real member count from peer_group_members
+  const { data: groups, error } = await supabase
+    .from('peer_groups')
+    .select('id, name, color, created_at, peer_group_members(count)')
+    .order('name', { ascending: true });
+
+  if (error) throw error;
+
+  // Map the nested count into a flat `members` field
+  return (groups || []).map(g => ({
+    ...g,
+    members: g.peer_group_members?.[0]?.count ?? 0,
+  }));
+}
+
+export async function fetchUserGroupMemberships() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data, error } = await supabase
+    .from('peer_group_members')
+    .select('group_id')
+    .eq('user_id', user.id);
+
+  if (error) throw error;
+  return (data || []).map(m => m.group_id);
+}
+
+export async function joinGroup(groupId) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Must be logged in to join a group');
+
+  const { error } = await supabase
+    .from('peer_group_members')
+    .insert({ group_id: groupId, user_id: user.id });
+
+  if (error) throw error;
+}
+
+export async function leaveGroup(groupId) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Must be logged in to leave a group');
+
+  const { error } = await supabase
+    .from('peer_group_members')
+    .delete()
+    .eq('group_id', groupId)
+    .eq('user_id', user.id);
+
+  if (error) throw error;
+}

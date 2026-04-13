@@ -38,11 +38,8 @@ export default function Home() {
       {/* Hero Section */}
       <section className={clsx('container', styles.heroContainer)}>
         <motion.div className={styles.heroContent} variants={pageVariants}>
-          <motion.div className={styles.badge} variants={itemVariants}>
-            <Sparkles className={styles.badgeIcon} size={16} />
-            <span>Your Digital Sanctuary</span>
-          </motion.div>
-          
+
+
           <motion.h1 className={styles.title} variants={itemVariants}>
             Find your calm.<br />
             <span className={styles.titleHighlight}>Grow your mind.</span>
