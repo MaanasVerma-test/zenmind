@@ -13,6 +13,18 @@ const pageVariants = {
   exit: { opacity: 0 }
 };
 
+const stretchSequence = [
+  { name: 'Tall Reach', instruction: 'Extend arms fully above your head, stretch your spine.', time: 5000, scale: 1.4, color: 'rgba(0, 255, 255, 0.9)', blur: '60px', img: '/stretch_reach.png' },
+  { name: 'Hold Reach', instruction: 'Maintain the upward stretch...', time: 3000, scale: 1.5, color: 'rgba(255, 0, 255, 1)', blur: '90px', img: '/stretch_reach.png' },
+  { name: 'Relax', instruction: 'Slowly bring your arms down.', time: 4000, scale: 1.0, color: 'rgba(128, 0, 128, 0.3)', blur: '20px', img: '/stretch_stand.png' },
+  { name: 'Left Bend', instruction: 'Lean gently to your left.', time: 5000, scale: 1.4, color: 'rgba(0, 255, 128, 0.9)', blur: '60px', img: '/stretch_left.png' },
+  { name: 'Hold Bend', instruction: 'Feel the stretch along your right side...', time: 3000, scale: 1.5, color: 'rgba(0, 255, 0, 1)', blur: '90px', img: '/stretch_left.png' },
+  { name: 'Center', instruction: 'Return to center gracefully.', time: 4000, scale: 1.0, color: 'rgba(128, 0, 128, 0.3)', blur: '20px', img: '/stretch_stand.png' },
+  { name: 'Right Bend', instruction: 'Lean gently to your right.', time: 5000, scale: 1.4, color: 'rgba(255, 255, 0, 0.9)', blur: '60px', img: '/stretch_right.png' },
+  { name: 'Hold Bend', instruction: 'Feel the stretch along your left side...', time: 3000, scale: 1.5, color: 'rgba(255, 165, 0, 1)', blur: '90px', img: '/stretch_right.png' },
+  { name: 'Center', instruction: 'Return to a loose standing posture.', time: 4000, scale: 1.0, color: 'rgba(128, 0, 128, 0.3)', blur: '20px', img: '/stretch_stand.png' },
+];
+
 export default function Meditation() {
   const [timeLeft, setTimeLeft] = useState(15 * 60);
   const [isActive, setIsActive] = useState(false);
@@ -45,17 +57,7 @@ export default function Meditation() {
   const [stretchActive, setStretchActive] = useState(false);
   const [stretchPhaseIndex, setStretchPhaseIndex] = useState(0);
 
-  const stretchSequence = [
-    { name: 'Tall Reach', instruction: 'Extend arms fully above your head, stretch your spine.', time: 5000, scale: 1.4, color: 'rgba(0, 255, 255, 0.9)', blur: '60px', img: '/stretch_reach.png' },
-    { name: 'Hold Reach', instruction: 'Maintain the upward stretch...', time: 3000, scale: 1.5, color: 'rgba(255, 0, 255, 1)', blur: '90px', img: '/stretch_reach.png' },
-    { name: 'Relax', instruction: 'Slowly bring your arms down.', time: 4000, scale: 1.0, color: 'rgba(128, 0, 128, 0.3)', blur: '20px', img: '/stretch_stand.png' },
-    { name: 'Left Bend', instruction: 'Lean gently to your left.', time: 5000, scale: 1.4, color: 'rgba(0, 255, 128, 0.9)', blur: '60px', img: '/stretch_left.png' },
-    { name: 'Hold Bend', instruction: 'Feel the stretch along your right side...', time: 3000, scale: 1.5, color: 'rgba(0, 255, 0, 1)', blur: '90px', img: '/stretch_left.png' },
-    { name: 'Center', instruction: 'Return to center gracefully.', time: 4000, scale: 1.0, color: 'rgba(128, 0, 128, 0.3)', blur: '20px', img: '/stretch_stand.png' },
-    { name: 'Right Bend', instruction: 'Lean gently to your right.', time: 5000, scale: 1.4, color: 'rgba(255, 255, 0, 0.9)', blur: '60px', img: '/stretch_right.png' },
-    { name: 'Hold Bend', instruction: 'Feel the stretch along your left side...', time: 3000, scale: 1.5, color: 'rgba(255, 165, 0, 1)', blur: '90px', img: '/stretch_right.png' },
-    { name: 'Center', instruction: 'Return to a loose standing posture.', time: 4000, scale: 1.0, color: 'rgba(128, 0, 128, 0.3)', blur: '20px', img: '/stretch_stand.png' },
-  ];
+
 
   useEffect(() => {
     localStorage.setItem('zenmind_checklist_v2', JSON.stringify(checklist));
@@ -136,7 +138,7 @@ export default function Meditation() {
 
     runStretch(0);
     return () => clearTimeout(timeout);
-  }, [stretchActive, stretchSequence]);
+  }, [stretchActive]);
 
   // Lock scroll during focus mode
   useEffect(() => {
