@@ -28,6 +28,12 @@
   }
 }
 
+@media (min-width: 1024px) {
+  .topTools {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 /* Timer */
 .timerCard {
   padding: var(--spacing-6);
@@ -165,6 +171,26 @@
   font-size: 1rem;
   color: rgba(255, 255, 255, 0.5);
   letter-spacing: 0.02em;
+}
+
+.stretchSkeleton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: contain;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.stretchOverlayText {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Breathing Pacer (in-page card) */

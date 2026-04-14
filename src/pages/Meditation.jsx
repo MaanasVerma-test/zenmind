@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { Card } from '../components/Card';
 import { Button } from '../components/Button';
 import styles from './Meditation.module.css';
-import { Play, Pause, RotateCcw, CheckCircle2, Circle, Wind, Video } from 'lucide-react';
+import { Play, Pause, RotateCcw, CheckCircle2, Circle, Wind, Video, Activity } from 'lucide-react';
 import { clsx } from 'clsx';
 
 const pageVariants = {
@@ -40,6 +40,22 @@ export default function Meditation() {
     { id: 'resonance', name: 'Resonance', desc: 'Inhale 5s, Exhale 5s' }
   ];
   const [activeBreathMode, setActiveBreathMode] = useState('478');
+
+  // Stretching Feature State
+  const [stretchActive, setStretchActive] = useState(false);
+  const [stretchPhaseIndex, setStretchPhaseIndex] = useState(0);
+
+  const stretchSequence = [
+    { name: 'Tall Reach', instruction: 'Extend arms fully above your head, stretch your spine.', time: 5000, scale: 1.4, color: 'rgba(0, 255, 255, 0.9)', blur: '60px', img: '/stretch_reach.png' },
+    { name: 'Hold Reach', instruction: 'Maintain the upward stretch...', time: 3000, scale: 1.5, color: 'rgba(255, 0, 255, 1)', blur: '90px', img: '/stretch_reach.png' },
+    { name: 'Relax', instruction: 'Slowly bring your arms down.', time: 4000, scale: 1.0, color: 'rgba(128, 0, 128, 0.3)', blur: '20px', img: '/stretch_stand.png' },
+    { name: 'Left Bend', instruction: 'Lean gently to your left.', time: 5000, scale: 1.4, color: 'rgba(0, 255, 128, 0.9)', blur: '60px', img: '/stretch_left.png' },
+    { name: 'Hold Bend', instruction: 'Feel the stretch along your right side...', time: 3000, scale: 1.5, color: 'rgba(0, 255, 0, 1)', blur: '90px', img: '/stretch_left.png' },
+    { name: 'Center', instruction: 'Return to center gracefully.', time: 4000, scale: 1.0, color: 'rgba(128, 0, 128, 0.3)', blur: '20px', img: '/stretch_stand.png' },
+    { name: 'Right Bend', instruction: 'Lean gently to your right.', time: 5000, scale: 1.4, color: 'rgba(255, 255, 0, 0.9)', blur: '60px', img: '/stretch_right.png' },
+    { name: 'Hold Bend', instruction: 'Feel the stretch along your left side...', time: 3000, scale: 1.5, color: 'rgba(255, 165, 0, 1)', blur: '90px', img: '/stretch_right.png' },
+    { name: 'Center', instruction: 'Return to a loose standing posture.', time: 4000, scale: 1.0, color: 'rgba(128, 0, 128, 0.3)', blur: '20px', img: '/stretch_stand.png' },
+  ];
 
   useEffect(() => {
     localStorage.setItem('zenmind_checklist_v2', JSON.stringify(checklist));
@@ -102,11 +118,31 @@ export default function Meditation() {
     return () => clearTimeout(timeout);
   }, [breathActive, activeBreathMode]);
 
+  // Stretching engine
+  useEffect(() => {
+    let timeout;
+    if (!stretchActive) {
+      setStretchPhaseIndex(0);
+      return;
+    }
+
+    const runStretch = (index) => {
+      setStretchPhaseIndex(index);
+      const nextIndex = (index + 1) % stretchSequence.length;
+      timeout = setTimeout(() => {
+        runStretch(nextIndex);
+      }, stretchSequence[index].time);
+    };
+
+    runStretch(0);
+    return () => clearTimeout(timeout);
+  }, [stretchActive, stretchSequence]);
+
   // Lock scroll during focus mode
   useEffect(() => {
-    document.body.style.overflow = breathActive ? 'hidden' : 'auto';
+    document.body.style.overflow = (breathActive || stretchActive) ? 'hidden' : 'auto';
     return () => { document.body.style.overflow = 'auto'; };
-  }, [breathActive]);
+  }, [breathActive, stretchActive]);
 
   const toggleTimer = () => setIsActive((prev) => !prev);
 
@@ -227,6 +263,57 @@ export default function Meditation() {
             </div>
           </motion.div>
         )}
+
+        {stretchActive && (
+          <motion.div
+            className={styles.focusOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className={styles.focusContent}>
+                <motion.img
+                  key={stretchSequence[stretchPhaseIndex].img}
+                  src={stretchSequence[stretchPhaseIndex].img}
+                  alt="Stretching Skeleton"
+                  className={styles.stretchSkeleton}
+                  initial={{ opacity: 0.7, scale: stretchSequence[stretchPhaseIndex].scale * 0.9 }}
+                  animate={{
+                    opacity: 1,
+                    filter: `drop-shadow(0 0 ${stretchSequence[stretchPhaseIndex].blur} ${stretchSequence[stretchPhaseIndex].color}) hue-rotate(180deg)`,
+                    scale: stretchSequence[stretchPhaseIndex].scale,
+                    transition: { duration: stretchSequence[stretchPhaseIndex].time / 1000, ease: 'easeInOut' }
+                  }}
+                />
+              <div className={styles.stretchOverlayText}>
+                <motion.div
+                  className={styles.focusPhase}
+                  key={`phase-${stretchPhaseIndex}`}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.8 }}
+                  style={{ background: 'rgba(0,0,0,0.5)', padding: '0.5rem 1.5rem', borderRadius: '1rem', backdropFilter: 'blur(10px)' }}
+                >
+                  {stretchSequence[stretchPhaseIndex].name}
+                </motion.div>
+                <motion.p
+                  className={styles.focusModeLabel}
+                  style={{ fontSize: '1.5rem', color: '#fff', marginTop: '1rem', background: 'rgba(0,0,0,0.5)', padding: '0.5rem 1.5rem', borderRadius: '1rem', backdropFilter: 'blur(10px)' }}
+                  key={`text-${stretchPhaseIndex}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8 }}
+                >
+                  {stretchSequence[stretchPhaseIndex].instruction}
+                </motion.p>
+                <Button size="lg" variant="secondary" onClick={() => setStretchActive(false)} style={{ marginTop: '3rem', zIndex: 10, position: 'relative' }}>
+                  Complete Stretch
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       <header className={styles.header}>
@@ -303,6 +390,37 @@ export default function Meditation() {
               />
               <div className={styles.pacerText}>
                 Click Begin to enter Focus Mode
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.25 }}>
+          <Card elevation={1} className={styles.breathingCard}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+              <div>
+                <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                  <Activity size={20} />
+                  <span style={{ fontSize: '1.125rem', fontFamily: 'var(--font-display)', fontWeight: 600 }}>Stretching Flow</span>
+                </h3>
+                <p className={styles.pacerSubtitle}>
+                  Full body dynamic sequence
+                </p>
+              </div>
+              <Button size="sm" variant="primary" onClick={() => setStretchActive(true)}>
+                Begin
+              </Button>
+            </div>
+
+            <div className={styles.pacerContainer}>
+              <img
+                src="/yoga_pose.png"
+                alt="Stretching"
+                className={styles.yogaGuy}
+                style={{ filter: 'hue-rotate(180deg)', opacity: 0.8 }}
+              />
+              <div className={styles.pacerText}>
+                Release tension
               </div>
             </div>
           </Card>
