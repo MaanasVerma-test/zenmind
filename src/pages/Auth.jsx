@@ -7,7 +7,7 @@ import { Button } from '../components/Button';
 import styles from './Auth.module.css';
 
 export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
@@ -165,7 +165,7 @@ export default function Auth() {
 
         <div className={styles.authFooter}>
           <p>
-            {isLogin ? "Don't have an account?" : "Already have an account?"}
+            {isLogin ? "Don't have an account?" : "Already a user?"}
             <button 
               type="button"
               className={styles.toggleBtn}
