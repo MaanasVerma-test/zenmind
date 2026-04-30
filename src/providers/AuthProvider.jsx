@@ -14,6 +14,9 @@ export const AuthProvider = ({ children }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+    }).catch((error) => {
+      console.error('Failed to get session:', error);
+      setLoading(false);
     });
 
     // Listen for auth changes
