@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import { Button } from '../components/Button';
 import { Card } from '../components/Card';
 import styles from './Home.module.css';
@@ -11,7 +11,7 @@ import { fetchSiteStats } from '../lib/database';
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1], staggerChildren: 0.1 } },
-  exit: { opacity: 0, y: -20, transition: { duration: 0.3 } }
+  exit: { opacity: 0, y: -10, transition: { duration: 0.3 } }
 };
 
 const itemVariants = {
@@ -28,7 +28,7 @@ export default function Home() {
   }, []);
 
   return (
-    <motion.div 
+    <Motion.div
       className={styles.home}
       variants={pageVariants}
       initial="initial"
@@ -37,28 +37,28 @@ export default function Home() {
     >
       {/* Hero Section */}
       <section className={clsx('container', styles.heroContainer)}>
-        <motion.div className={styles.heroContent} variants={pageVariants}>
+        <Motion.div className={styles.heroContent} variants={pageVariants}>
 
 
-          <motion.h1 className={styles.title} variants={itemVariants}>
+          <Motion.h1 className={styles.title} variants={itemVariants}>
             Find your calm.<br />
             <span className={styles.titleHighlight}>Grow your mind.</span>
-          </motion.h1>
+          </Motion.h1>
           
-          <motion.p className={styles.subtitle} variants={itemVariants}>
+          <Motion.p className={styles.subtitle} variants={itemVariants}>
             A safe space designed for your mental well-being. Blend ancient wisdom with modern technology.
-          </motion.p>
+          </Motion.p>
           
-          <motion.div className={styles.actions} variants={itemVariants}>
+          <Motion.div className={styles.actions} variants={itemVariants}>
             <Button size="lg" onClick={() => navigate('/meditation')}>
               Start Meditating
             </Button>
             <Button size="lg" variant="secondary" onClick={() => navigate('/community')}>
               Join Community
             </Button>
-          </motion.div>
+          </Motion.div>
           
-          <motion.div className={styles.stats} variants={itemVariants}>
+          <Motion.div className={styles.stats} variants={itemVariants}>
             <div className={styles.statItem}>
               <Users size={20} className={styles.statIcon} />
               <div>
@@ -66,17 +66,17 @@ export default function Home() {
                 <span>Active Members</span>
               </div>
             </div>
-            <div className={styles.statItem}>
+            <div className={stats.app_rating ? styles.statItem : clsx(styles.statItem, styles.hidden)}>
               <Sparkles size={20} className={styles.statIcon} />
               <div>
                 <strong>{stats.app_rating}</strong>
                 <span>App Rating</span>
               </div>
             </div>
-          </motion.div>
-        </motion.div>
+          </Motion.div>
+        </Motion.div>
         
-        <motion.div 
+        <Motion.div
           className={styles.heroVisual}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -85,20 +85,20 @@ export default function Home() {
           <div className={clsx(styles.abstractShape, styles.shape1)}></div>
           <div className={clsx(styles.abstractShape, styles.shape2)}></div>
           <div className={clsx(styles.abstractShape, styles.shape3)}></div>
-          <motion.div 
+          <Motion.div
             className={clsx('glass-panel', styles.heroCard)}
             whileHover={{ y: -5, scale: 1.02 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
             <h3>Daily Intention</h3>
             <p>"I choose peace over perfection today."</p>
-          </motion.div>
-        </motion.div>
+          </Motion.div>
+        </Motion.div>
       </section>
 
       {/* Features Section */}
       <section className={clsx('container', styles.section)}>
-        <motion.div 
+        <Motion.div
           className={styles.sectionHeader}
           initial="initial"
           whileInView="animate"
@@ -107,9 +107,9 @@ export default function Home() {
         >
           <h2>Holistic Tools for Healing</h2>
           <p>Everything you need to ground your mind, organized intuitively.</p>
-        </motion.div>
+        </Motion.div>
 
-        <motion.div 
+        <Motion.div
           className={styles.featuresGrid}
           initial="initial"
           whileInView="animate"
@@ -119,7 +119,7 @@ export default function Home() {
             animate: { opacity: 1, transition: { staggerChildren: 0.2 } }
           }}
         >
-          <motion.div variants={itemVariants} onClick={() => navigate('/meditation')} style={{cursor:'pointer'}}>
+          <Motion.div variants={itemVariants} onClick={() => navigate('/meditation')} style={{cursor:'pointer'}}>
             <Card elevation={1} className={styles.featureCard}>
               <div className={styles.featureIconWrap} style={{ background: 'var(--primary-container)', color: 'var(--on-primary-container)' }}>
                 <Wind size={28} />
@@ -128,9 +128,9 @@ export default function Home() {
               <p>Short, evidence-based guided meditations designed to lower heart rate and reduce cortisol levels.</p>
               <span className={styles.featureLink}>Explore Sessions <ArrowRight size={16} /></span>
             </Card>
-          </motion.div>
+          </Motion.div>
           
-          <motion.div variants={itemVariants} onClick={() => navigate('/community')} style={{cursor:'pointer'}}>
+          <Motion.div variants={itemVariants} onClick={() => navigate('/community')} style={{cursor:'pointer'}}>
             <Card elevation={1} className={styles.featureCard}>
               <div className={styles.featureIconWrap} style={{ background: 'var(--secondary-container)', color: 'var(--on-secondary-container)' }}>
                 <MessageCircle size={28} />
@@ -139,9 +139,9 @@ export default function Home() {
               <p>Join tightly-knit groups like 'Sleep Sanctuary' to share thoughts without fear of judgment.</p>
               <span className={styles.featureLink}>View Groups <ArrowRight size={16} /></span>
             </Card>
-          </motion.div>
+          </Motion.div>
 
-          <motion.div variants={itemVariants} onClick={() => navigate('/therapists')} style={{cursor:'pointer'}}>
+          <Motion.div variants={itemVariants} onClick={() => navigate('/therapists')} style={{cursor:'pointer'}}>
             <Card elevation={1} className={styles.featureCard}>
               <div className={styles.featureIconWrap} style={{ background: 'var(--tertiary-container)', color: 'var(--on-tertiary-container)' }}>
                 <HeartPulse size={28} />
@@ -150,30 +150,30 @@ export default function Home() {
               <p>Connect instantly with verified clinical psychologists and counselors for deep, structured healing.</p>
               <span className={styles.featureLink}>Find a Therapist <ArrowRight size={16} /></span>
             </Card>
-          </motion.div>
-        </motion.div>
+          </Motion.div>
+        </Motion.div>
       </section>
 
       {/* Philosophy Section */}
       <section className={styles.darkSection}>
         <div className={clsx('container', styles.philosophyContainer)}>
-          <motion.div 
+          <Motion.div
             className={styles.philosophyContent}
             initial="initial"
             whileInView="animate"
             viewport={{ once: true }}
             variants={pageVariants}
           >
-            <motion.h2 variants={itemVariants}>Not just an app. A reaction against digital noise.</motion.h2>
-            <motion.p variants={itemVariants}>
+            <Motion.h2 variants={itemVariants}>Not just an app. A reaction against digital noise.</Motion.h2>
+            <Motion.p variants={itemVariants}>
               Most apps are designed to steal your attention. ZenMind is designed to give it back. 
               Our interface is intentionally built with soft colors, fluid motion, and zero addictive loops.
               We measure success not by how long you stay, but by how well you feel when you leave.
-            </motion.p>
-            <motion.div variants={itemVariants} style={{marginTop: '2rem'}}>
+            </Motion.p>
+            <Motion.div variants={itemVariants} style={{marginTop: '2rem'}}>
               <Button onClick={() => navigate('/about')} variant="secondary">Read Our Story</Button>
-            </motion.div>
-          </motion.div>
+            </Motion.div>
+          </Motion.div>
         </div>
       </section>
 
@@ -199,7 +199,7 @@ export default function Home() {
             <h4>Company</h4>
             <ul>
               <li onClick={() => navigate('/about')}>About Us</li>
-              <li>Privacy Policy</li>
+              <li onClick={() => navigate('/privacy')}>Privacy Policy</li>
               <li>Terms of Service</li>
             </ul>
           </div>
@@ -208,6 +208,6 @@ export default function Home() {
           <p>© 2026 ZenMind Wellness. All rights reserved.</p>
         </div>
       </footer>
-    </motion.div>
+    </Motion.div>
   );
 }
