@@ -17,6 +17,7 @@ import Zena from './pages/Zena';
 import About from './pages/About';
 import Auth from './pages/Auth';
 import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -34,6 +35,7 @@ function AnimatedRoutes() {
         <Route path="/zena" element={<Zena />} />
         <Route path="/about" element={<About />} />
         <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
       </Routes>
     </AnimatePresence>
   );

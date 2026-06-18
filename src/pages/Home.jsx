@@ -200,12 +200,9 @@ export default function Home() {
             <ul>
               <li onClick={() => navigate('/about')}>About Us</li>
               <li onClick={() => navigate('/privacy')}>Privacy Policy</li>
-              <li>Terms of Service</li>
+              <li onClick={() => navigate('/terms')}>Terms of Service</li>
             </ul>
           </div>
-        </div>
-        <div className={styles.footerBottom}>
-          <p>© 2026 ZenMind Wellness. All rights reserved.</p>
         </div>
       </footer>
     </Motion.div>
