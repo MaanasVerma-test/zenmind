@@ -204,6 +204,9 @@ export default function Home() {
             </ul>
           </div>
         </div>
+        <div className={styles.footerBottom}>
+          <p>© 2026 ZenMind Wellness. All rights reserved.</p>
+        </div>
       </footer>
     </Motion.div>
   );
