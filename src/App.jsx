@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { Navigation } from './components/Navigation';
+import ScrollToTop from './components/ScrollToTop';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { AuthProvider } from './providers/AuthProvider';
 import { Toaster } from 'sonner';
@@ -53,6 +54,7 @@ function App() {
           }
         }} />
         <BrowserRouter>
+          <ScrollToTop />
           <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
             <Navigation />
             <main style={{ flex: 1 }}>

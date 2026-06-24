@@ -21,7 +21,6 @@ export default function TherapistDetails() {
   const [therapist, setTherapist] = useState(null);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
     const found = therapists.find(t => t.id === parseInt(id));
     setTherapist(found);
   }, [id]);
